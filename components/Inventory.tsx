@@ -6,25 +6,33 @@ const Inventory: React.FC<{ products: Product[], onAdd: (p: Product) => void, on
   const [showModal, setShowModal] = useState(false);
   const [editing, setEditing] = useState<Product | null>(null);
   
-  const [form, setForm] = useState({ name: '', category: '', price: 0, stock: 0, min: 5 });
+  const [form, setForm] = useState({ name: '', category: '', costPrice: 0, price: 0, stock: 0, min: 5 });
 
   const resetForm = () => {
-    setForm({ name: '', category: '', price: 0, stock: 0, min: 5 });
+    setForm({ name: '', category: '', costPrice: 0, price: 0, stock: 0, min: 5 });
     setEditing(null);
   };
 
   const openEdit = (p: Product) => {
     setEditing(p);
-    setForm({ name: p.name, category: p.category, price: p.price, stock: p.stock, min: p.minStockThreshold });
+    setForm({ 
+      name: p.name, 
+      category: p.category, 
+      costPrice: p.costPrice || 0, 
+      price: p.price, 
+      stock: p.stock, 
+      min: p.minStockThreshold 
+    });
     setShowModal(true);
   };
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
-    const data = {
+    const data: Product = {
       id: editing ? editing.id : Math.random().toString(36).substr(2, 9),
       name: form.name,
       category: form.category,
+      costPrice: form.costPrice,
       price: form.price,
       stock: form.stock,
       minStockThreshold: form.min
@@ -39,7 +47,7 @@ const Inventory: React.FC<{ products: Product[], onAdd: (p: Product) => void, on
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
         <div>
           <h1 className="text-4xl font-extrabold text-slate-900 tracking-tight">Inventario</h1>
-          <p className="text-slate-500 text-lg">Control total sobre tus productos y suministros.</p>
+          <p className="text-slate-500 text-lg">Control de stock y análisis de márgenes de ganancia.</p>
         </div>
         <button 
           onClick={() => { resetForm(); setShowModal(true); }}
@@ -57,52 +65,62 @@ const Inventory: React.FC<{ products: Product[], onAdd: (p: Product) => void, on
               <tr className="bg-slate-50 border-b border-slate-100">
                 <th className="px-8 py-5 text-sm font-bold text-slate-500 uppercase tracking-widest">Producto</th>
                 <th className="px-8 py-5 text-sm font-bold text-slate-500 uppercase tracking-widest text-center">Stock</th>
-                <th className="px-8 py-5 text-sm font-bold text-slate-500 uppercase tracking-widest">Precio</th>
-                <th className="px-8 py-5 text-sm font-bold text-slate-500 uppercase tracking-widest">Estado</th>
+                <th className="px-8 py-5 text-sm font-bold text-slate-500 uppercase tracking-widest">Precios (C / V)</th>
+                <th className="px-8 py-5 text-sm font-bold text-slate-500 uppercase tracking-widest">Ganancia / Margen</th>
                 <th className="px-8 py-5 text-sm font-bold text-slate-500 uppercase tracking-widest text-right">Opciones</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {products.length > 0 ? products.map(p => (
-                <tr key={p.id} className="hover:bg-slate-50/50 transition-colors group">
-                  <td className="px-8 py-5">
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-slate-100 rounded-2xl flex items-center justify-center text-slate-500 font-bold group-hover:bg-indigo-100 group-hover:text-indigo-600 transition-colors">
-                        {p.name.charAt(0)}
+              {products.length > 0 ? products.map(p => {
+                const profit = p.price - p.costPrice;
+                const margin = p.costPrice > 0 ? ((profit / p.price) * 100).toFixed(1) : '100';
+                
+                return (
+                  <tr key={p.id} className="hover:bg-slate-50/50 transition-colors group">
+                    <td className="px-8 py-5">
+                      <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 bg-slate-100 rounded-2xl flex items-center justify-center text-slate-500 font-bold group-hover:bg-indigo-100 group-hover:text-indigo-600 transition-colors">
+                          {p.name.charAt(0)}
+                        </div>
+                        <div>
+                          <p className="font-bold text-slate-900 text-lg">{p.name}</p>
+                          <p className="text-sm text-slate-400">{p.category}</p>
+                        </div>
                       </div>
-                      <div>
-                        <p className="font-bold text-slate-900 text-lg">{p.name}</p>
-                        <p className="text-sm text-slate-400">{p.category}</p>
+                    </td>
+                    <td className="px-8 py-5 text-center">
+                      <div className="flex flex-col items-center">
+                        <span className="text-xl font-bold text-slate-800">{p.stock}</span>
+                        {p.stock <= p.minStockThreshold && (
+                          <span className="text-[10px] text-rose-500 font-black uppercase">Crítico</span>
+                        )}
                       </div>
-                    </div>
-                  </td>
-                  <td className="px-8 py-5 text-center">
-                    <span className="text-xl font-bold text-slate-800">{p.stock}</span>
-                  </td>
-                  <td className="px-8 py-5">
-                    <span className="font-bold text-indigo-600">${p.price.toLocaleString()}</span>
-                  </td>
-                  <td className="px-8 py-5">
-                    {p.stock <= 0 ? (
-                      <span className="bg-rose-50 text-rose-600 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide">Agotado</span>
-                    ) : p.stock <= p.minStockThreshold ? (
-                      <span className="bg-amber-50 text-amber-600 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide">Stock Bajo</span>
-                    ) : (
-                      <span className="bg-emerald-50 text-emerald-600 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide">Saludable</span>
-                    )}
-                  </td>
-                  <td className="px-8 py-5 text-right">
-                    <div className="flex items-center justify-end gap-2">
-                      <button onClick={() => openEdit(p)} className="p-3 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all">
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
-                      </button>
-                      <button onClick={() => onDelete(p.id)} className="p-3 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all">
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              )) : (
+                    </td>
+                    <td className="px-8 py-5">
+                      <div className="flex flex-col">
+                        <span className="text-xs text-slate-400 font-bold">C: ${p.costPrice.toLocaleString()}</span>
+                        <span className="font-bold text-indigo-600 text-lg">V: ${p.price.toLocaleString()}</span>
+                      </div>
+                    </td>
+                    <td className="px-8 py-5">
+                      <div className="flex flex-col">
+                        <span className="font-black text-emerald-600">+${profit.toLocaleString()}</span>
+                        <span className="text-xs font-bold text-emerald-500/70">{margin}% Margen</span>
+                      </div>
+                    </td>
+                    <td className="px-8 py-5 text-right">
+                      <div className="flex items-center justify-end gap-2">
+                        <button onClick={() => openEdit(p)} className="p-3 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all">
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+                        </button>
+                        <button onClick={() => onDelete(p.id)} className="p-3 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all">
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              }) : (
                 <tr>
                   <td colSpan={5} className="px-8 py-20 text-center">
                     <div className="flex flex-col items-center">
@@ -110,7 +128,6 @@ const Inventory: React.FC<{ products: Product[], onAdd: (p: Product) => void, on
                         <svg className="w-10 h-10 text-slate-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>
                       </div>
                       <h3 className="text-xl font-bold text-slate-400">Sin productos aún</h3>
-                      <p className="text-slate-300">Añade tu primer item para empezar la gestión.</p>
                     </div>
                   </td>
                 </tr>
@@ -138,15 +155,19 @@ const Inventory: React.FC<{ products: Product[], onAdd: (p: Product) => void, on
                   <input required type="text" value={form.category} onChange={e => setForm({...form, category: e.target.value})} className="w-full bg-slate-50 border border-slate-100 p-4 rounded-2xl outline-none focus:ring-4 focus:ring-indigo-100 transition-all" />
                 </div>
                 <div>
-                  <label className="block text-sm font-bold text-slate-600 mb-2 uppercase tracking-wide">Precio Venta</label>
-                  <input required type="number" value={form.price} onChange={e => setForm({...form, price: Number(e.target.value)})} className="w-full bg-slate-50 border border-slate-100 p-4 rounded-2xl outline-none focus:ring-4 focus:ring-indigo-100 transition-all font-bold text-indigo-600" />
+                  <label className="block text-sm font-bold text-slate-600 mb-2 uppercase tracking-wide italic text-slate-400">Precio de Costo (Compra)</label>
+                  <input required type="number" step="0.01" value={form.costPrice} onChange={e => setForm({...form, costPrice: Number(e.target.value)})} className="w-full bg-slate-50 border border-slate-100 p-4 rounded-2xl outline-none focus:ring-4 focus:ring-emerald-100 transition-all font-bold text-emerald-700" />
+                </div>
+                <div>
+                  <label className="block text-sm font-bold text-slate-600 mb-2 uppercase tracking-wide">Precio de Venta</label>
+                  <input required type="number" step="0.01" value={form.price} onChange={e => setForm({...form, price: Number(e.target.value)})} className="w-full bg-slate-50 border border-slate-100 p-4 rounded-2xl outline-none focus:ring-4 focus:ring-indigo-100 transition-all font-bold text-indigo-600" />
                 </div>
                 <div>
                   <label className="block text-sm font-bold text-slate-600 mb-2 uppercase tracking-wide">Stock Inicial</label>
                   <input required type="number" value={form.stock} onChange={e => setForm({...form, stock: Number(e.target.value)})} className="w-full bg-slate-50 border border-slate-100 p-4 rounded-2xl outline-none focus:ring-4 focus:ring-indigo-100 transition-all font-bold" />
                 </div>
                 <div>
-                  <label className="block text-sm font-bold text-slate-600 mb-2 uppercase tracking-wide">Alerta de Stock (Mín.)</label>
+                  <label className="block text-sm font-bold text-slate-600 mb-2 uppercase tracking-wide">Alerta Stock Bajo</label>
                   <input required type="number" value={form.min} onChange={e => setForm({...form, min: Number(e.target.value)})} className="w-full bg-slate-50 border border-slate-100 p-4 rounded-2xl outline-none focus:ring-4 focus:ring-indigo-100 transition-all" />
                 </div>
               </div>

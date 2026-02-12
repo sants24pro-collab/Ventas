@@ -5,13 +5,15 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 
 const Dashboard: React.FC<{ products: Product[], sales: Sale[] }> = ({ products, sales }) => {
   const totalIncome = sales.reduce((acc, s) => acc + s.totalPrice, 0);
+  const totalProfit = sales.reduce((acc, s) => acc + s.totalProfit, 0);
   const totalStock = products.reduce((acc, p) => acc + p.stock, 0);
   const inventoryValue = products.reduce((acc, p) => acc + (p.price * p.stock), 0);
   const lowStockCount = products.filter(p => p.stock <= p.minStockThreshold).length;
 
   const chartData = [...sales].reverse().slice(0, 10).map(s => ({
     label: s.productName.length > 8 ? s.productName.substring(0, 8) + '..' : s.productName,
-    val: s.totalPrice
+    ingreso: s.totalPrice,
+    ganancia: s.totalProfit
   }));
 
   const stockData = products
@@ -22,13 +24,14 @@ const Dashboard: React.FC<{ products: Product[], sales: Sale[] }> = ({ products,
       cantidad: p.stock
     }));
 
-  const MetricCard = ({ title, value, color, icon }: any) => (
+  const MetricCard = ({ title, value, color, icon, subtitle }: any) => (
     <div className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm transition-all hover:shadow-md hover:border-indigo-100">
       <div className={`w-12 h-12 ${color} text-white rounded-2xl flex items-center justify-center mb-4 shadow-lg`}>
         {icon}
       </div>
       <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">{title}</p>
       <h3 className="text-2xl font-black text-slate-900 mt-1">{value}</h3>
+      {subtitle && <p className="text-[10px] text-slate-400 mt-1 font-bold">{subtitle}</p>}
     </div>
   );
 
@@ -36,15 +39,16 @@ const Dashboard: React.FC<{ products: Product[], sales: Sale[] }> = ({ products,
     <div className="animate-fade-in space-y-8 pb-10">
       <header>
         <h1 className="text-4xl font-extrabold text-slate-900 tracking-tight">Panel de Control</h1>
-        <p className="text-slate-500 text-lg">Visión general de la salud de tu negocio.</p>
+        <p className="text-slate-500 text-lg">Visión general de la rentabilidad de tu negocio.</p>
       </header>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         <MetricCard 
-          title="Ingresos Totales" 
-          value={`$${totalIncome.toLocaleString()}`} 
-          color="bg-emerald-500"
-          icon={<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>}
+          title="Ganancia Total" 
+          value={`$${totalProfit.toLocaleString()}`} 
+          color="bg-emerald-600"
+          subtitle={`De un total de $${totalIncome.toLocaleString()} en ingresos`}
+          icon={<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>}
         />
         <MetricCard 
           title="Valor Activo" 
@@ -69,8 +73,11 @@ const Dashboard: React.FC<{ products: Product[], sales: Sale[] }> = ({ products,
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-10">
         <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-bold text-slate-800 tracking-tight">Flujo de Ingresos</h2>
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Últimos 10 items</span>
+            <h2 className="text-xl font-bold text-slate-800 tracking-tight">Rendimiento de Ventas</h2>
+            <div className="flex gap-4">
+               <div className="flex items-center gap-1"><div className="w-3 h-3 bg-indigo-500 rounded-full"></div><span className="text-[10px] font-bold text-slate-400">INGRESO</span></div>
+               <div className="flex items-center gap-1"><div className="w-3 h-3 bg-emerald-500 rounded-full"></div><span className="text-[10px] font-bold text-slate-400">GANANCIA</span></div>
+            </div>
           </div>
           <div className="h-72">
             {chartData.length > 0 ? (
@@ -82,7 +89,8 @@ const Dashboard: React.FC<{ products: Product[], sales: Sale[] }> = ({ products,
                   <Tooltip 
                     contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
                   />
-                  <Line type="monotone" dataKey="val" stroke="#6366f1" strokeWidth={4} dot={{ r: 4, fill: '#6366f1', strokeWidth: 2, stroke: '#fff' }} activeDot={{ r: 6 }} />
+                  <Line type="monotone" dataKey="ingreso" stroke="#6366f1" strokeWidth={3} dot={{ r: 3, fill: '#6366f1' }} />
+                  <Line type="monotone" dataKey="ganancia" stroke="#10b981" strokeWidth={3} dot={{ r: 3, fill: '#10b981' }} />
                 </LineChart>
               </ResponsiveContainer>
             ) : (

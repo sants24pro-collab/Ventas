@@ -3,7 +3,8 @@ export interface Product {
   id: string;
   name: string;
   category: string;
-  price: number;
+  costPrice: number; // Precio al que compraste
+  price: number;     // Precio al que vendes
   stock: number;
   minStockThreshold: number;
 }
@@ -14,6 +15,7 @@ export interface Sale {
   productName: string;
   quantity: number;
   totalPrice: number;
+  totalProfit: number; // Ganancia real de esta venta
   date: string;
 }
 
