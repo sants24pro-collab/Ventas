@@ -20,11 +20,6 @@ const Sales: React.FC<{ products: Product[], sales: Sale[], onSale: (s: Sale) =>
       return;
     }
 
-    if (qty <= 0) {
-      setError('La cantidad debe ser mayor a 0.');
-      return;
-    }
-
     onSale({
       id: Math.random().toString(36).substr(2, 9),
       productId: pid,
@@ -41,111 +36,99 @@ const Sales: React.FC<{ products: Product[], sales: Sale[], onSale: (s: Sale) =>
   };
 
   return (
-    <div className="animate-fade-in space-y-8 pb-10">
+    <div className="animate-fade-in space-y-12 pb-16">
       <header>
-        <h1 className="text-4xl font-extrabold text-slate-900 tracking-tight">Registro de Ventas</h1>
-        <p className="text-slate-500 text-lg">Facturación con cálculo en tiempo real de utilidades.</p>
+        <h1 className="text-6xl font-black text-[#111111] tracking-tighter mb-2">Transacciones</h1>
+        <p className="text-[#888888] text-xl font-medium">Registro exclusivo de ventas y utilidades.</p>
       </header>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
         <div className="lg:col-span-1">
-          <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm sticky top-8">
-            <h2 className="text-xl font-bold text-slate-800 mb-6 flex items-center gap-3">
-              <span className="w-8 h-8 bg-emerald-500 text-white rounded-lg flex items-center justify-center text-sm font-black">✓</span>
-              Cobrar Venta
-            </h2>
-            <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="bg-white p-10 rounded-[3.5rem] border border-[#E5E0D8] shadow-xl sticky top-8">
+            <h2 className="text-[10px] font-black text-[#111111] mb-8 uppercase tracking-[0.4em]">Nueva Orden</h2>
+            <form onSubmit={handleSubmit} className="space-y-8">
               <div>
-                <label className="block text-xs font-black text-slate-400 mb-2 uppercase tracking-widest">Producto</label>
-                <div className="relative">
-                  <select 
-                    required 
-                    value={pid} 
-                    onChange={e => { setPid(e.target.value); setError(''); }}
-                    className="w-full bg-slate-50 border border-slate-100 p-4 rounded-2xl outline-none focus:ring-4 focus:ring-indigo-100 transition-all font-bold appearance-none text-slate-700"
-                  >
-                    <option value="">Selecciona un producto...</option>
-                    {products.map(p => (
-                      <option key={p.id} value={p.id} disabled={p.stock <= 0}>
-                        {p.name} - ${p.price.toLocaleString()}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+                <label className="block text-[10px] font-black text-[#888888] mb-3 uppercase tracking-widest">Seleccionar Artículo</label>
+                <select 
+                  required 
+                  value={pid} 
+                  onChange={e => setPid(e.target.value)}
+                  className="w-full bg-[#FAF9F6] border border-[#E5E0D8] p-5 rounded-2xl outline-none focus:border-[#111111] transition-all font-bold text-[#111111] appearance-none"
+                >
+                  <option value="">Buscar en catálogo...</option>
+                  {products.map(p => (
+                    <option key={p.id} value={p.id} disabled={p.stock <= 0}>
+                      {p.name} — ${p.price.toLocaleString()}
+                    </option>
+                  ))}
+                </select>
               </div>
               
               <div>
-                <label className="block text-xs font-black text-slate-400 mb-2 uppercase tracking-widest">Cantidad</label>
+                <label className="block text-[10px] font-black text-[#888888] mb-3 uppercase tracking-widest">Cantidad</label>
                 <input 
                   required 
                   min="1" 
                   type="number" 
                   value={qty} 
-                  onChange={e => { setQty(Number(e.target.value)); setError(''); }} 
-                  className="w-full bg-slate-50 border border-slate-100 p-4 rounded-2xl outline-none focus:ring-4 focus:ring-indigo-100 transition-all text-xl font-black text-slate-800" 
+                  onChange={e => setQty(Number(e.target.value))} 
+                  className="w-full bg-[#FAF9F6] border border-[#E5E0D8] p-5 rounded-2xl outline-none focus:border-[#111111] transition-all text-3xl font-black text-[#111111]" 
                 />
               </div>
 
-              {error && (
-                <div className="p-4 bg-rose-50 border border-rose-100 rounded-2xl text-rose-600 text-sm font-bold animate-fade-in flex gap-2 items-center">
-                  <svg className="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                  {error}
-                </div>
-              )}
+              {error && <div className="p-4 bg-rose-50 text-rose-600 text-xs font-bold rounded-2xl">{error}</div>}
               
-              <div className="p-6 bg-slate-900 rounded-3xl border border-slate-800 shadow-inner space-y-3">
-                <div className="flex justify-between text-[10px] font-black text-slate-500 uppercase tracking-widest">
-                  <span>Venta Total</span>
-                  <span className="text-white">${total.toLocaleString()}</span>
+              <div className="p-8 bg-[#111111] rounded-[2.5rem] shadow-2xl space-y-4">
+                <div className="flex justify-between text-[10px] font-black text-[#666666] uppercase tracking-widest">
+                  <span>Subtotal</span>
+                  <span className="text-[#F8F5F2]">${total.toLocaleString()}</span>
                 </div>
-                <div className="flex justify-between text-[10px] font-black text-emerald-500 uppercase tracking-widest">
-                  <span>Ganancia Estimada</span>
-                  <span>+${estimatedProfit.toLocaleString()}</span>
-                </div>
-                <div className="flex justify-between items-center text-white border-t border-slate-800 pt-3 mt-2">
-                  <span className="font-bold text-slate-400">TOTAL COBRO</span>
-                  <span className="text-3xl font-black tracking-tight text-white">${total.toLocaleString()}</span>
+                <div className="flex justify-between items-center text-[#F8F5F2] border-t border-white/10 pt-4 mt-2">
+                  <span className="text-xs font-black uppercase tracking-widest">Total Orden</span>
+                  <span className="text-4xl font-black">${total.toLocaleString()}</span>
                 </div>
               </div>
 
               <button 
                 type="submit" 
-                disabled={!pid || qty <= 0}
-                className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-100 disabled:text-slate-300 text-white p-5 rounded-[2rem] font-black text-lg shadow-xl shadow-indigo-100 transition-all transform active:scale-95 flex items-center justify-center gap-2"
+                disabled={!pid}
+                className="w-full bg-[#111111] hover:bg-black disabled:bg-[#F2EBE3] disabled:text-[#BBBBBB] text-[#F8F5F2] p-6 rounded-full font-black text-lg tracking-widest transition-all shadow-xl active:scale-95"
               >
-                Finalizar Venta
+                PROCESAR VENTA
               </button>
             </form>
           </div>
         </div>
 
         <div className="lg:col-span-2">
-          <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden flex flex-col h-full max-h-[750px]">
-            <div className="p-8 border-b border-slate-100 flex justify-between items-center bg-white sticky top-0 z-10">
-              <h2 className="text-xl font-bold text-slate-800 tracking-tight">Historial de Utilidades</h2>
+          <div className="bg-white rounded-[3.5rem] border border-[#E5E0D8] shadow-sm overflow-hidden flex flex-col max-h-[800px]">
+            <div className="p-10 border-b border-[#E5E0D8] bg-white sticky top-0 z-10">
+              <h2 className="text-[10px] font-black text-[#111111] uppercase tracking-[0.4em]">Diario de Ventas</h2>
             </div>
             <div className="overflow-x-auto custom-scrollbar flex-1">
               <table className="w-full text-left">
-                <thead className="bg-slate-50 border-b border-slate-100">
+                <thead className="bg-[#FAF9F6] border-b border-[#E5E0D8]">
                   <tr>
-                    <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Producto / Fecha</th>
-                    <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] text-center">Cant.</th>
-                    <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] text-right">Cobro</th>
-                    <th className="px-8 py-4 text-[10px] font-black text-emerald-600 uppercase tracking-[0.2em] text-right">Ganancia</th>
+                    <th className="px-10 py-5 text-[10px] font-black text-[#888888] uppercase tracking-widest">Referencia</th>
+                    <th className="px-10 py-5 text-[10px] font-black text-[#888888] uppercase tracking-widest text-center">Unid.</th>
+                    <th className="px-10 py-5 text-[10px] font-black text-[#888888] uppercase tracking-widest text-right">Importe</th>
+                    <th className="px-10 py-5 text-[10px] font-black text-emerald-700 uppercase tracking-widest text-right">Neto</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
-                  {sales.map(s => (
-                    <tr key={s.id} className="hover:bg-slate-50/50 transition-colors group">
-                      <td className="px-8 py-5">
-                        <p className="font-bold text-slate-900">{s.productName}</p>
-                        <p className="text-[10px] font-medium text-slate-400">{new Date(s.date).toLocaleDateString()}</p>
+                <tbody className="divide-y divide-[#F2EBE3]">
+                  {sales.length > 0 ? sales.map(s => (
+                    <tr key={s.id} className="hover:bg-[#FAF9F6] transition-colors">
+                      <td className="px-10 py-6">
+                        <p className="font-extrabold text-[#111111] text-lg tracking-tighter">{s.productName}</p>
+                        <p className="text-[10px] font-bold text-[#BBBBBB] uppercase tracking-widest">{new Date(s.date).toLocaleDateString()}</p>
                       </td>
-                      <td className="px-8 py-5 text-center font-black text-slate-400">x{s.quantity}</td>
-                      <td className="px-8 py-5 text-right font-bold text-slate-800">${s.totalPrice.toLocaleString()}</td>
-                      <td className="px-8 py-5 text-right font-black text-emerald-600">+${s.totalProfit.toLocaleString()}</td>
+                      <td className="px-10 py-6 text-center font-black text-[#888888]">x{s.quantity}</td>
+                      <td className="px-10 py-6 text-right font-black text-[#111111]">${s.totalPrice.toLocaleString()}</td>
+                      <td className="px-10 py-6 text-right font-black text-emerald-600">+${s.totalProfit.toLocaleString()}</td>
                     </tr>
-                  ))}
+                  )) : (
+                    <tr><td colSpan={4} className="p-20 text-center text-[#BBBBBB] italic">Esperando transacciones...</td></tr>
+                  )}
                 </tbody>
               </table>
             </div>

@@ -88,10 +88,10 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen w-full bg-slate-50 overflow-hidden">
+    <div className="flex h-screen w-full bg-[#F8F5F2] overflow-hidden">
       <Sidebar currentView={view} setView={setView} onExport={exportData} />
       <main className="flex-1 h-full overflow-y-auto custom-scrollbar">
-        <div className="p-6 md:p-10 max-w-7xl mx-auto min-h-full">
+        <div className="p-6 md:p-12 max-w-7xl mx-auto min-h-full">
           {renderContent()}
         </div>
       </main>

@@ -11,118 +11,92 @@ const Dashboard: React.FC<{ products: Product[], sales: Sale[] }> = ({ products,
   const lowStockCount = products.filter(p => p.stock <= p.minStockThreshold).length;
 
   const chartData = [...sales].reverse().slice(0, 10).map(s => ({
-    label: s.productName.length > 8 ? s.productName.substring(0, 8) + '..' : s.productName,
+    label: s.productName.substring(0, 6),
     ingreso: s.totalPrice,
     ganancia: s.totalProfit
   }));
 
-  const stockData = products
-    .sort((a, b) => b.stock - a.stock)
-    .slice(0, 5)
-    .map(p => ({
-      name: p.name.length > 12 ? p.name.substring(0, 12) + '..' : p.name,
-      cantidad: p.stock
-    }));
-
   const MetricCard = ({ title, value, color, icon, subtitle }: any) => (
-    <div className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm transition-all hover:shadow-md hover:border-indigo-100">
-      <div className={`w-12 h-12 ${color} text-white rounded-2xl flex items-center justify-center mb-4 shadow-lg`}>
+    <div className="bg-white p-10 rounded-[3rem] border border-[#E5E0D8] shadow-sm transition-all hover:shadow-xl group">
+      <div className={`w-14 h-14 ${color} rounded-2xl flex items-center justify-center mb-6 shadow-xl transition-transform group-hover:scale-110`}>
         {icon}
       </div>
-      <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">{title}</p>
-      <h3 className="text-2xl font-black text-slate-900 mt-1">{value}</h3>
-      {subtitle && <p className="text-[10px] text-slate-400 mt-1 font-bold">{subtitle}</p>}
+      <p className="text-[10px] font-black text-[#888888] uppercase tracking-[0.3em] mb-2">{title}</p>
+      <h3 className="text-4xl font-black text-[#111111] tracking-tighter">{value}</h3>
+      {subtitle && <p className="text-xs text-[#AAAAAA] mt-2 font-medium italic">{subtitle}</p>}
     </div>
   );
 
   return (
-    <div className="animate-fade-in space-y-8 pb-10">
+    <div className="animate-fade-in space-y-12 pb-16">
       <header>
-        <h1 className="text-4xl font-extrabold text-slate-900 tracking-tight">Panel de Control</h1>
-        <p className="text-slate-500 text-lg">Visión general de la rentabilidad de tu negocio.</p>
+        <h1 className="text-6xl font-black text-[#111111] tracking-tighter mb-2">Visión Global</h1>
+        <p className="text-[#888888] text-xl font-medium">Análisis de rendimiento y rentabilidad boutique.</p>
       </header>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
         <MetricCard 
-          title="Ganancia Total" 
+          title="Utilidad Neta" 
           value={`$${totalProfit.toLocaleString()}`} 
-          color="bg-emerald-600"
-          subtitle={`De un total de $${totalIncome.toLocaleString()} en ingresos`}
-          icon={<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>}
+          color="bg-[#111111] text-[#F8F5F2]"
+          subtitle={`De $${totalIncome.toLocaleString()} facturados`}
+          icon={<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>}
         />
         <MetricCard 
-          title="Valor Activo" 
+          title="Valor Stock" 
           value={`$${inventoryValue.toLocaleString()}`} 
-          color="bg-indigo-500"
-          icon={<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>}
+          color="bg-[#FAF9F6] text-[#111111] border border-[#E5E0D8]"
+          icon={<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M20 7l-8-4-8 4" /></svg>}
         />
         <MetricCard 
-          title="Stock en Tienda" 
+          title="Activos" 
           value={totalStock} 
-          color="bg-sky-500"
-          icon={<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" /></svg>}
+          color="bg-[#F2EBE3] text-[#111111]"
+          icon={<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 8h14M5 8a2 2 0 110-4" /></svg>}
         />
         <MetricCard 
-          title="Alertas Críticas" 
+          title="Alertas" 
           value={lowStockCount} 
-          color="bg-rose-500"
-          icon={<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>}
+          color={lowStockCount > 0 ? "bg-rose-500 text-white" : "bg-[#FAF9F6] text-[#BBBBBB]"}
+          icon={<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 9v2" /></svg>}
         />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-10">
-        <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-bold text-slate-800 tracking-tight">Rendimiento de Ventas</h2>
-            <div className="flex gap-4">
-               <div className="flex items-center gap-1"><div className="w-3 h-3 bg-indigo-500 rounded-full"></div><span className="text-[10px] font-bold text-slate-400">INGRESO</span></div>
-               <div className="flex items-center gap-1"><div className="w-3 h-3 bg-emerald-500 rounded-full"></div><span className="text-[10px] font-bold text-slate-400">GANANCIA</span></div>
-            </div>
-          </div>
-          <div className="h-72">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+        <div className="bg-white p-12 rounded-[3.5rem] border border-[#E5E0D8] shadow-sm">
+          <h2 className="text-2xl font-black text-[#111111] tracking-tight mb-10 uppercase tracking-widest">Rendimiento Operativo</h2>
+          <div className="h-80">
             {chartData.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={chartData}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                  <XAxis dataKey="label" stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} />
-                  <YAxis stroke="#94a3b8" fontSize={10} tickLine={false} axisLine={false} tickFormatter={(val) => `$${val}`} />
-                  <Tooltip 
-                    contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
-                  />
-                  <Line type="monotone" dataKey="ingreso" stroke="#6366f1" strokeWidth={3} dot={{ r: 3, fill: '#6366f1' }} />
-                  <Line type="monotone" dataKey="ganancia" stroke="#10b981" strokeWidth={3} dot={{ r: 3, fill: '#10b981' }} />
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F2EBE3" />
+                  <XAxis dataKey="label" stroke="#888888" fontSize={10} tickLine={false} axisLine={false} />
+                  <YAxis stroke="#888888" fontSize={10} tickLine={false} axisLine={false} />
+                  <Tooltip contentStyle={{ backgroundColor: '#111111', color: '#F8F5F2', border: 'none', borderRadius: '15px' }} />
+                  <Line type="monotone" dataKey="ingreso" stroke="#111111" strokeWidth={4} dot={{ r: 4, fill: '#111111' }} />
+                  <Line type="monotone" dataKey="ganancia" stroke="#D1CCC7" strokeWidth={4} dot={{ r: 4, fill: '#D1CCC7' }} />
                 </LineChart>
               </ResponsiveContainer>
             ) : (
-              <div className="h-full flex flex-col items-center justify-center text-slate-300 space-y-2">
-                <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
-                <p className="italic font-medium">No hay ventas para mostrar</p>
-              </div>
+              <div className="h-full flex items-center justify-center text-[#BBBBBB] italic">Sin datos suficientes</div>
             )}
           </div>
         </div>
 
-        <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-bold text-slate-800 tracking-tight">Ranking de Inventario</h2>
-            <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Top 5 productos</span>
-          </div>
-          <div className="h-72">
-            {stockData.length > 0 ? (
+        <div className="bg-white p-12 rounded-[3.5rem] border border-[#E5E0D8] shadow-sm">
+           <h2 className="text-2xl font-black text-[#111111] tracking-tight mb-10 uppercase tracking-widest">Distribución de Stock</h2>
+           <div className="h-80">
+            {products.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={stockData} layout="vertical" margin={{ left: 10, right: 30 }}>
-                  <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#f1f5f9" />
+                <BarChart data={products.slice(0, 5)} layout="vertical">
                   <XAxis type="number" hide />
-                  <YAxis dataKey="name" type="category" stroke="#94a3b8" fontSize={11} width={90} tickLine={false} axisLine={false} />
-                  <Tooltip cursor={{ fill: '#f8fafc' }} contentStyle={{ borderRadius: '12px', border: 'none' }} />
-                  <Bar dataKey="cantidad" fill="#818cf8" radius={[0, 10, 10, 0]} barSize={18} />
+                  <YAxis dataKey="name" type="category" stroke="#888888" fontSize={10} width={80} axisLine={false} tickLine={false} />
+                  <Tooltip contentStyle={{ borderRadius: '15px' }} />
+                  <Bar dataKey="stock" fill="#111111" radius={[0, 10, 10, 0]} barSize={20} />
                 </BarChart>
               </ResponsiveContainer>
             ) : (
-              <div className="h-full flex flex-col items-center justify-center text-slate-300 space-y-2">
-                <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>
-                <p className="italic font-medium">Registra productos para ver ranking</p>
-              </div>
+              <div className="h-full flex items-center justify-center text-[#BBBBBB] italic">Sin productos en stock</div>
             )}
           </div>
         </div>
