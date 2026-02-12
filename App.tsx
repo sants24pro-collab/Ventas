@@ -11,21 +11,21 @@ const App: React.FC = () => {
   const [view, setView] = useState<View>(View.DASHBOARD);
   
   const [products, setProducts] = useState<Product[]>(() => {
-    const saved = localStorage.getItem('sm_v2_products');
+    const saved = localStorage.getItem('sm_v3_products');
     return saved ? JSON.parse(saved) : [];
   });
   
   const [sales, setSales] = useState<Sale[]>(() => {
-    const saved = localStorage.getItem('sm_v2_sales');
+    const saved = localStorage.getItem('sm_v3_sales');
     return saved ? JSON.parse(saved) : [];
   });
 
   useEffect(() => {
-    localStorage.setItem('sm_v2_products', JSON.stringify(products));
+    localStorage.setItem('sm_v3_products', JSON.stringify(products));
   }, [products]);
 
   useEffect(() => {
-    localStorage.setItem('sm_v2_sales', JSON.stringify(sales));
+    localStorage.setItem('sm_v3_sales', JSON.stringify(sales));
   }, [sales]);
 
   const addProduct = (product: Product) => setProducts(prev => [product, ...prev]);
@@ -40,41 +40,34 @@ const App: React.FC = () => {
     }
   };
 
-  const exportData = () => {
-    const convertToCSV = (objArray: any[]) => {
-      if (objArray.length === 0) return '';
-      const array = typeof objArray !== 'object' ? JSON.parse(objArray) : objArray;
-      let str = '';
-      const header = Object.keys(array[0]).join(',');
-      str += header + '\r\n';
-      for (let i = 0; i < array.length; i++) {
-        let line = '';
-        for (const index in array[i]) {
-          if (line !== '') line += ',';
-          line += '"' + array[i][index] + '"';
-        }
-        str += line + '\r\n';
-      }
-      return str;
-    };
+  const exportInventoryToCSV = () => {
+    if (products.length === 0) {
+      alert("No hay productos para exportar.");
+      return;
+    }
 
-    const productCSV = convertToCSV(products);
-    const salesCSV = convertToCSV(sales);
+    const headers = ["ID", "Nombre", "Categoría", "Precio Costo", "Precio Venta", "Stock Actual", "Mínimo Stock"];
+    const rows = products.map(p => [
+      p.id,
+      p.name,
+      p.category,
+      p.costPrice,
+      p.price,
+      p.stock,
+      p.minStockThreshold
+    ]);
 
-    const download = (content: string, fileName: string) => {
-      const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
-      const link = document.createElement('a');
-      const url = URL.createObjectURL(blob);
-      link.setAttribute('href', url);
-      link.setAttribute('download', fileName);
-      link.style.visibility = 'hidden';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    };
+    let csvContent = "data:text/csv;charset=utf-8," 
+      + headers.join(",") + "\n"
+      + rows.map(e => e.join(",")).join("\n");
 
-    if (products.length > 0) download(productCSV, `Inventario_${new Date().toLocaleDateString()}.csv`);
-    if (sales.length > 0) setTimeout(() => download(salesCSV, `Ventas_${new Date().toLocaleDateString()}.csv`), 500);
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `Inventario_Actualizado_${new Date().toLocaleDateString()}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   const renderContent = () => {
@@ -89,7 +82,7 @@ const App: React.FC = () => {
 
   return (
     <div className="flex h-screen w-full bg-[#F8F5F2] overflow-hidden">
-      <Sidebar currentView={view} setView={setView} onExport={exportData} />
+      <Sidebar currentView={view} setView={setView} onExport={exportInventoryToCSV} />
       <main className="flex-1 h-full overflow-y-auto custom-scrollbar">
         <div className="p-6 md:p-12 max-w-7xl mx-auto min-h-full">
           {renderContent()}
