@@ -50,8 +50,9 @@ const Inventory: React.FC<{ products: Product[], onAdd: (p: Product) => void, on
     resetForm();
   };
 
-  // Función para manejar el focus y seleccionar el texto automáticamente
-  const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => e.target.select();
+  const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+    e.target.select();
+  };
 
   return (
     <div className="animate-fade-in pb-12">
@@ -69,16 +70,16 @@ const Inventory: React.FC<{ products: Product[], onAdd: (p: Product) => void, on
         </button>
       </div>
 
-      <div className="bg-white rounded-[4rem] border border-[#E5E0D8] shadow-2xl overflow-hidden">
+      <div className="bg-white rounded-[3rem] md:rounded-[4rem] border border-[#E5E0D8] shadow-2xl overflow-hidden">
         <div className="overflow-x-auto custom-scrollbar">
           <table className="w-full text-left">
             <thead>
               <tr className="bg-[#FAF9F6] border-b border-[#E5E0D8]">
-                <th className="px-12 py-8 text-[10px] font-black text-[#AAAAAA] uppercase tracking-[0.4em]">Referencia</th>
-                <th className="px-12 py-8 text-[10px] font-black text-[#AAAAAA] uppercase tracking-[0.4em] text-center">Stock</th>
-                <th className="px-12 py-8 text-[10px] font-black text-[#AAAAAA] uppercase tracking-[0.4em]">Valuación</th>
-                <th className="px-12 py-8 text-[10px] font-black text-[#AAAAAA] uppercase tracking-[0.4em]">Neto</th>
-                <th className="px-12 py-8 text-[10px] font-black text-[#AAAAAA] uppercase tracking-[0.4em] text-right">Opciones</th>
+                <th className="px-8 md:px-12 py-8 text-[10px] font-black text-[#AAAAAA] uppercase tracking-[0.4em]">Referencia</th>
+                <th className="px-8 md:px-12 py-8 text-[10px] font-black text-[#AAAAAA] uppercase tracking-[0.4em] text-center">Stock</th>
+                <th className="px-8 md:px-12 py-8 text-[10px] font-black text-[#AAAAAA] uppercase tracking-[0.4em]">Valuación</th>
+                <th className="px-8 md:px-12 py-8 text-[10px] font-black text-[#AAAAAA] uppercase tracking-[0.4em]">Neto</th>
+                <th className="px-8 md:px-12 py-8 text-[10px] font-black text-[#AAAAAA] uppercase tracking-[0.4em] text-right">Opciones</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#F2EBE3]">
@@ -88,43 +89,43 @@ const Inventory: React.FC<{ products: Product[], onAdd: (p: Product) => void, on
                 
                 return (
                   <tr key={p.id} className="hover:bg-[#FAF9F6] transition-all group">
-                    <td className="px-12 py-8">
-                      <div className="flex items-center gap-8">
-                        <div className="w-16 h-16 bg-[#111111] rounded-[1.5rem] flex items-center justify-center text-[#F8F5F2] text-2xl font-black shadow-lg">
+                    <td className="px-8 md:px-12 py-8">
+                      <div className="flex items-center gap-6 md:gap-8">
+                        <div className="w-12 h-12 md:w-16 md:h-16 bg-[#111111] rounded-[1.2rem] md:rounded-[1.5rem] flex items-center justify-center text-[#F8F5F2] text-xl md:text-2xl font-black shadow-lg">
                           {p.name.charAt(0)}
                         </div>
                         <div>
-                          <p className="font-black text-[#111111] text-xl tracking-tight leading-none mb-1">{p.name}</p>
-                          <p className="text-[10px] text-[#BBBBBB] uppercase font-black tracking-widest">{p.category}</p>
+                          <p className="font-black text-[#111111] text-lg md:text-xl tracking-tight leading-none mb-1">{p.name}</p>
+                          <p className="text-[9px] md:text-[10px] text-[#BBBBBB] uppercase font-black tracking-widest">{p.category}</p>
                         </div>
                       </div>
                     </td>
-                    <td className="px-12 py-8 text-center">
+                    <td className="px-8 md:px-12 py-8 text-center">
                       <div className="flex flex-col items-center">
-                        <span className={`text-3xl font-black tracking-tighter ${p.stock <= p.minStockThreshold ? 'text-rose-600' : 'text-[#111111]'}`}>{p.stock}</span>
+                        <span className={`text-2xl md:text-3xl font-black tracking-tighter ${p.stock <= p.minStockThreshold ? 'text-rose-600' : 'text-[#111111]'}`}>{p.stock}</span>
                         {p.stock <= p.minStockThreshold && (
-                          <span className="text-[9px] text-rose-600 font-black uppercase tracking-widest mt-1">Reponer</span>
+                          <span className="text-[8px] md:text-[9px] text-rose-600 font-black uppercase tracking-widest mt-1">Reponer</span>
                         )}
                       </div>
                     </td>
-                    <td className="px-12 py-8">
+                    <td className="px-8 md:px-12 py-8">
                       <div className="flex flex-col">
-                        <span className="text-[10px] text-[#BBBBBB] font-black uppercase tracking-[0.2em] mb-1">C: ${p.costPrice.toLocaleString()}</span>
-                        <span className="font-black text-[#111111] text-2xl tracking-tighter">V: ${p.price.toLocaleString()}</span>
+                        <span className="text-[9px] md:text-[10px] text-[#BBBBBB] font-black uppercase tracking-[0.2em] mb-1">C: ${p.costPrice.toLocaleString()}</span>
+                        <span className="font-black text-[#111111] text-xl md:text-2xl tracking-tighter">V: ${p.price.toLocaleString()}</span>
                       </div>
                     </td>
-                    <td className="px-12 py-8">
+                    <td className="px-8 md:px-12 py-8">
                       <div className="flex flex-col">
-                        <span className="font-black text-emerald-700 text-xl tracking-tighter">+${profit.toLocaleString()}</span>
-                        <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest italic opacity-60">{margin}% Margen</span>
+                        <span className="font-black text-emerald-700 text-lg md:text-xl tracking-tighter">+${profit.toLocaleString()}</span>
+                        <span className="text-[9px] md:text-[10px] font-black text-emerald-500 uppercase tracking-widest italic opacity-60">{margin}%</span>
                       </div>
                     </td>
-                    <td className="px-12 py-8 text-right">
-                      <div className="flex items-center justify-end gap-4 opacity-0 group-hover:opacity-100 transition-all transform translate-x-4 group-hover:translate-x-0">
-                        <button onClick={() => openEdit(p)} className="w-12 h-12 flex items-center justify-center text-[#111111] bg-[#F8F5F2] border border-[#E5E0D8] rounded-full transition-all hover:bg-[#111111] hover:text-white hover:shadow-xl">
+                    <td className="px-8 md:px-12 py-8 text-right">
+                      <div className="flex items-center justify-end gap-2 md:gap-4 opacity-0 group-hover:opacity-100 transition-all transform translate-x-4 group-hover:translate-x-0">
+                        <button onClick={() => openEdit(p)} className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center text-[#111111] bg-[#F8F5F2] border border-[#E5E0D8] rounded-full transition-all hover:bg-[#111111] hover:text-white hover:shadow-xl">
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
                         </button>
-                        <button onClick={() => onDelete(p.id)} className="w-12 h-12 flex items-center justify-center text-rose-500 bg-rose-50 rounded-full transition-all hover:bg-rose-500 hover:text-white hover:shadow-xl">
+                        <button onClick={() => onDelete(p.id)} className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center text-rose-500 bg-rose-50 rounded-full transition-all hover:bg-rose-500 hover:text-white hover:shadow-xl">
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                         </button>
                       </div>
@@ -143,99 +144,108 @@ const Inventory: React.FC<{ products: Product[], onAdd: (p: Product) => void, on
         </div>
       </div>
 
-      {/* MODAL REDISEÑADO PARA EVITAR QUE SE TAPE */}
+      {/* MODAL CORREGIDO: SECCIÓN DE GUARDADO SIEMPRE VISIBLE */}
       {showModal && (
-        <div className="fixed inset-0 bg-[#111111]/95 backdrop-blur-xl z-[100] flex items-center justify-center p-4 md:p-10 overflow-hidden">
-          <div className="bg-[#FAF9F6] rounded-[3.5rem] w-full max-w-2xl shadow-[0_50px_100px_rgba(0,0,0,0.5)] overflow-hidden animate-fade-in border border-white/10 flex flex-col max-h-[90vh]">
-            <div className="px-8 md:px-12 py-8 border-b border-[#E5E0D8] flex justify-between items-center bg-white shrink-0">
+        <div className="fixed inset-0 bg-[#111111]/95 backdrop-blur-xl z-[100] flex items-center justify-center p-4 md:p-8 overflow-hidden">
+          <div className="bg-[#FAF9F6] rounded-[2.5rem] md:rounded-[3.5rem] w-full max-w-2xl shadow-[0_50px_100px_rgba(0,0,0,0.5)] overflow-hidden animate-fade-in border border-white/10 flex flex-col max-h-[95vh] md:max-h-[90vh]">
+            
+            {/* Cabecera Fija */}
+            <div className="px-8 md:px-12 py-6 md:py-8 border-b border-[#E5E0D8] flex justify-between items-center bg-white shrink-0">
               <div>
-                <h2 className="text-3xl font-black text-[#111111] tracking-tighter uppercase">{editing ? 'Editar' : 'Registrar'}</h2>
+                <h2 className="text-2xl md:text-3xl font-black text-[#111111] tracking-tighter uppercase">{editing ? 'Editar' : 'Registrar'}</h2>
                 <p className="text-[9px] font-black text-[#BBBBBB] uppercase tracking-[0.4em] mt-1">Artículos Elite Store</p>
               </div>
-              <button onClick={() => setShowModal(false)} className="w-12 h-12 flex items-center justify-center bg-[#F8F5F2] text-[#111111] hover:bg-black hover:text-white rounded-full transition-all text-sm">✕</button>
+              <button onClick={() => setShowModal(false)} className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center bg-[#F8F5F2] text-[#111111] hover:bg-black hover:text-white rounded-full transition-all text-sm">✕</button>
             </div>
             
-            <form onSubmit={handleSave} className="p-8 md:p-12 space-y-8 overflow-y-auto custom-scrollbar flex-1">
-              <div className="space-y-8">
-                <div>
-                  <label className="block text-[9px] font-black text-[#888888] mb-3 uppercase tracking-[0.3em]">Nombre del Artículo</label>
-                  <input 
-                    required 
-                    type="text" 
-                    value={form.name} 
-                    onChange={e => setForm({...form, name: e.target.value})} 
-                    className="w-full bg-white border border-[#E5E0D8] p-5 rounded-2xl outline-none focus:border-[#111111] transition-all text-xl font-black text-[#111111] shadow-inner" 
-                    placeholder="Ej. Bolso de Piel" 
-                  />
-                </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <form onSubmit={handleSave} className="flex flex-col flex-1 min-h-0 overflow-hidden">
+              {/* Cuerpo con Scroll */}
+              <div className="p-8 md:p-12 space-y-8 overflow-y-auto custom-scrollbar flex-1">
+                <div className="space-y-8">
                   <div>
-                    <label className="block text-[9px] font-black text-[#888888] mb-3 uppercase tracking-[0.3em]">Categoría</label>
+                    <label className="block text-[9px] font-black text-[#888888] mb-3 uppercase tracking-[0.3em]">Nombre del Artículo</label>
                     <input 
                       required 
                       type="text" 
-                      value={form.category} 
-                      onChange={e => setForm({...form, category: e.target.value})} 
-                      className="w-full bg-white border border-[#E5E0D8] p-5 rounded-2xl outline-none focus:border-[#111111] transition-all font-bold text-[#111111]" 
+                      value={form.name} 
+                      onChange={e => setForm({...form, name: e.target.value})} 
+                      className="w-full bg-white border border-[#E5E0D8] p-4 md:p-5 rounded-2xl outline-none focus:border-[#111111] transition-all text-lg md:text-xl font-black text-[#111111] shadow-inner" 
+                      placeholder="Ej. Reloj de Lujo" 
                     />
                   </div>
-                  <div>
-                    <label className="block text-[9px] font-black text-[#888888] mb-3 uppercase tracking-[0.3em]">Stock Inicial</label>
-                    <input 
-                      required 
-                      type="number" 
-                      onFocus={handleFocus}
-                      value={form.stock} 
-                      onChange={e => setForm({...form, stock: e.target.value})} 
-                      className="w-full bg-white border border-[#E5E0D8] p-5 rounded-2xl outline-none focus:border-[#111111] transition-all font-black text-xl text-[#111111]" 
-                    />
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+                    <div>
+                      <label className="block text-[9px] font-black text-[#888888] mb-3 uppercase tracking-[0.3em]">Categoría</label>
+                      <input 
+                        required 
+                        type="text" 
+                        value={form.category} 
+                        onChange={e => setForm({...form, category: e.target.value})} 
+                        className="w-full bg-white border border-[#E5E0D8] p-4 md:p-5 rounded-2xl outline-none focus:border-[#111111] transition-all font-bold text-[#111111]" 
+                        placeholder="Categoría"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[9px] font-black text-[#888888] mb-3 uppercase tracking-[0.3em]">Stock Inicial</label>
+                      <input 
+                        required 
+                        type="number" 
+                        onFocus={handleFocus}
+                        value={form.stock} 
+                        onChange={e => setForm({...form, stock: e.target.value})} 
+                        className="w-full bg-white border border-[#E5E0D8] p-4 md:p-5 rounded-2xl outline-none focus:border-[#111111] transition-all font-black text-xl text-[#111111]" 
+                      />
+                    </div>
                   </div>
-                </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  <div>
-                    <label className="block text-[9px] font-black text-[#888888] mb-3 uppercase tracking-[0.3em]">Costo Adquisición ($)</label>
-                    <input 
-                      required 
-                      type="number" 
-                      step="0.01" 
-                      onFocus={handleFocus}
-                      value={form.costPrice} 
-                      onChange={e => setForm({...form, costPrice: e.target.value})} 
-                      className="w-full bg-[#FAF9F6] border border-[#E5E0D8] p-5 rounded-2xl outline-none focus:border-[#111111] transition-all font-black text-xl text-[#888888]" 
-                    />
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+                    <div>
+                      <label className="block text-[9px] font-black text-[#888888] mb-3 uppercase tracking-[0.3em]">Costo Compra ($)</label>
+                      <input 
+                        required 
+                        type="number" 
+                        step="0.01" 
+                        onFocus={handleFocus}
+                        value={form.costPrice} 
+                        onChange={e => setForm({...form, costPrice: e.target.value})} 
+                        className="w-full bg-[#FAF9F6] border border-[#E5E0D8] p-4 md:p-5 rounded-2xl outline-none focus:border-[#111111] transition-all font-black text-xl text-[#888888]" 
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[9px] font-black text-[#888888] mb-3 uppercase tracking-[0.3em]">Precio Venta ($)</label>
+                      <input 
+                        required 
+                        type="number" 
+                        step="0.01" 
+                        onFocus={handleFocus}
+                        value={form.price} 
+                        onChange={e => setForm({...form, price: e.target.value})} 
+                        className="w-full bg-white border border-[#E5E0D8] p-4 md:p-5 rounded-2xl outline-none focus:border-[#111111] transition-all font-black text-xl text-[#111111]" 
+                      />
+                    </div>
                   </div>
-                  <div>
-                    <label className="block text-[9px] font-black text-[#888888] mb-3 uppercase tracking-[0.3em]">Precio de Venta ($)</label>
-                    <input 
-                      required 
-                      type="number" 
-                      step="0.01" 
-                      onFocus={handleFocus}
-                      value={form.price} 
-                      onChange={e => setForm({...form, price: e.target.value})} 
-                      className="w-full bg-white border border-[#E5E0D8] p-5 rounded-2xl outline-none focus:border-[#111111] transition-all font-black text-xl text-[#111111]" 
-                    />
-                  </div>
-                </div>
 
-                <div>
-                   <label className="block text-[9px] font-black text-[#888888] mb-3 uppercase tracking-[0.3em]">Mínimo para Alerta</label>
-                   <input 
-                    required 
-                    type="number" 
-                    onFocus={handleFocus}
-                    value={form.min} 
-                    onChange={e => setForm({...form, min: e.target.value})} 
-                    className="w-full bg-white border border-[#E5E0D8] p-5 rounded-2xl outline-none focus:border-[#111111] transition-all font-bold text-[#111111]" 
-                   />
+                  <div>
+                     <label className="block text-[9px] font-black text-[#888888] mb-3 uppercase tracking-[0.3em]">Mínimo para Alerta</label>
+                     <input 
+                      required 
+                      type="number" 
+                      onFocus={handleFocus}
+                      value={form.min} 
+                      onChange={e => setForm({...form, min: e.target.value})} 
+                      className="w-full bg-white border border-[#E5E0D8] p-4 md:p-5 rounded-2xl outline-none focus:border-[#111111] transition-all font-bold text-[#111111]" 
+                     />
+                  </div>
                 </div>
               </div>
 
-              <button type="submit" className="w-full bg-[#111111] hover:bg-black text-[#F8F5F2] p-7 rounded-full font-black text-xs tracking-[0.4em] shadow-2xl transition-all transform hover:-translate-y-1 active:scale-95 mt-10 uppercase shrink-0">
-                {editing ? 'Confirmar Cambios' : 'Confirmar Adquisición'}
-              </button>
+              {/* Botón de Guardado Fijo al final del Modal */}
+              <div className="p-8 md:p-12 border-t border-[#E5E0D8] bg-[#FAF9F6] shrink-0">
+                <button type="submit" className="w-full bg-[#111111] hover:bg-black text-[#F8F5F2] py-6 md:py-8 rounded-full font-black text-xs md:text-sm tracking-[0.5em] shadow-2xl transition-all transform hover:-translate-y-1 active:scale-95 uppercase">
+                  {editing ? 'Confirmar Cambios' : 'Confirmar Adquisición'}
+                </button>
+              </div>
             </form>
           </div>
         </div>
