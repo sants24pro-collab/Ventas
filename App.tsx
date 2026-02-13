@@ -7,25 +7,42 @@ import Inventory from './components/Inventory.tsx';
 import Sales from './components/Sales.tsx';
 import AIInsights from './components/AIInsights.tsx';
 
+// Llave maestra para persistencia permanente
+const MASTER_KEY_PRODUCTS = 'ELITE_STOCK_MASTER_PRODUCTS';
+const MASTER_KEY_SALES = 'ELITE_STOCK_MASTER_SALES';
+
 const App: React.FC = () => {
   const [view, setView] = useState<View>(View.DASHBOARD);
   
+  // Lógica de inicialización con migración de datos de versiones anteriores
   const [products, setProducts] = useState<Product[]>(() => {
-    const saved = localStorage.getItem('sm_v3_products');
-    return saved ? JSON.parse(saved) : [];
+    const current = localStorage.getItem(MASTER_KEY_PRODUCTS);
+    if (current) return JSON.parse(current);
+    
+    // Si no hay en la maestra, buscar en versiones previas
+    const legacy = localStorage.getItem('sm_v3_products') || 
+                   localStorage.getItem('sm_v2_products') || 
+                   localStorage.getItem('sm_v1_products');
+    return legacy ? JSON.parse(legacy) : [];
   });
   
   const [sales, setSales] = useState<Sale[]>(() => {
-    const saved = localStorage.getItem('sm_v3_sales');
-    return saved ? JSON.parse(saved) : [];
+    const current = localStorage.getItem(MASTER_KEY_SALES);
+    if (current) return JSON.parse(current);
+    
+    const legacy = localStorage.getItem('sm_v3_sales') || 
+                   localStorage.getItem('sm_v2_sales') || 
+                   localStorage.getItem('sm_v1_sales');
+    return legacy ? JSON.parse(legacy) : [];
   });
 
+  // Guardado automático cada vez que cambien los datos
   useEffect(() => {
-    localStorage.setItem('sm_v3_products', JSON.stringify(products));
+    localStorage.setItem(MASTER_KEY_PRODUCTS, JSON.stringify(products));
   }, [products]);
 
   useEffect(() => {
-    localStorage.setItem('sm_v3_sales', JSON.stringify(sales));
+    localStorage.setItem(MASTER_KEY_SALES, JSON.stringify(sales));
   }, [sales]);
 
   const addProduct = (product: Product) => setProducts(prev => [product, ...prev]);
@@ -42,29 +59,50 @@ const App: React.FC = () => {
 
   const exportInventoryToCSV = () => {
     if (products.length === 0) {
-      alert("No hay productos para exportar.");
+      alert("No hay productos en el inventario para exportar.");
       return;
     }
 
-    const headers = ["ID", "Nombre", "Categoría", "Precio Costo", "Precio Venta", "Stock Actual", "Mínimo Stock"];
-    const rows = products.map(p => [
-      p.id,
-      p.name,
-      p.category,
-      p.costPrice,
-      p.price,
-      p.stock,
-      p.minStockThreshold
-    ]);
+    // Cabeceras detalladas para Excel
+    const headers = [
+      "ID", 
+      "Nombre de Producto", 
+      "Categoria", 
+      "Costo de Compra ($)", 
+      "Precio de Venta ($)", 
+      "Ganancia por Unidad ($)", 
+      "Margen de Ganancia (%)", 
+      "Stock Disponible", 
+      "Umbral de Alerta"
+    ];
 
-    let csvContent = "data:text/csv;charset=utf-8," 
-      + headers.join(",") + "\n"
-      + rows.map(e => e.join(",")).join("\n");
+    const rows = products.map(p => {
+      const profit = p.price - p.costPrice;
+      const margin = p.costPrice > 0 ? ((profit / p.price) * 100).toFixed(2) : "100";
+      return [
+        p.id,
+        p.name,
+        p.category,
+        p.costPrice.toFixed(2),
+        p.price.toFixed(2),
+        profit.toFixed(2),
+        `${margin}%`,
+        p.stock,
+        p.minStockThreshold
+      ];
+    });
 
-    const encodedUri = encodeURI(csvContent);
+    // Crear contenido CSV con BOM para soporte de tildes en Excel
+    let csvContent = "\uFEFF" + headers.join(",") + "\n";
+    rows.forEach(row => {
+      csvContent += row.map(cell => `"${cell}"`).join(",") + "\n";
+    });
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `Inventario_Actualizado_${new Date().toLocaleDateString()}.csv`);
+    link.setAttribute("href", url);
+    link.setAttribute("download", `Inventario_Elite_Store_${new Date().toISOString().split('T')[0]}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
