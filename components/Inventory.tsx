@@ -6,7 +6,6 @@ const Inventory: React.FC<{ products: Product[], onAdd: (p: Product) => void, on
   const [showModal, setShowModal] = useState(false);
   const [editing, setEditing] = useState<Product | null>(null);
   
-  // Usamos strings para el estado del formulario para permitir campos vacíos mientras el usuario edita
   const [form, setForm] = useState({ 
     name: '', 
     category: '', 
@@ -50,7 +49,6 @@ const Inventory: React.FC<{ products: Product[], onAdd: (p: Product) => void, on
     resetForm();
   };
 
-  // Selecciona el texto al hacer clic para facilitar el borrado
   const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
     e.target.select();
   };
@@ -71,16 +69,16 @@ const Inventory: React.FC<{ products: Product[], onAdd: (p: Product) => void, on
         </button>
       </div>
 
-      <div className="bg-white rounded-[2.5rem] md:rounded-[4rem] border border-[#E5E0D8] shadow-2xl overflow-hidden">
+      <div className="bg-white rounded-[3rem] border border-[#E5E0D8] shadow-2xl overflow-hidden">
         <div className="overflow-x-auto custom-scrollbar">
           <table className="w-full text-left">
             <thead>
               <tr className="bg-[#FAF9F6] border-b border-[#E5E0D8]">
-                <th className="px-8 md:px-12 py-8 text-[10px] font-black text-[#AAAAAA] uppercase tracking-[0.4em]">Referencia</th>
-                <th className="px-8 md:px-12 py-8 text-[10px] font-black text-[#AAAAAA] uppercase tracking-[0.4em] text-center">Stock</th>
-                <th className="px-8 md:px-12 py-8 text-[10px] font-black text-[#AAAAAA] uppercase tracking-[0.4em]">Valores</th>
-                <th className="px-8 md:px-12 py-8 text-[10px] font-black text-[#AAAAAA] uppercase tracking-[0.4em]">Neto</th>
-                <th className="px-8 md:px-12 py-8 text-[10px] font-black text-[#AAAAAA] uppercase tracking-[0.4em] text-right">Acción</th>
+                <th className="px-12 py-8 text-[10px] font-black text-[#AAAAAA] uppercase tracking-[0.4em]">Referencia</th>
+                <th className="px-12 py-8 text-[10px] font-black text-[#AAAAAA] uppercase tracking-[0.4em] text-center">Stock</th>
+                <th className="px-12 py-8 text-[10px] font-black text-[#AAAAAA] uppercase tracking-[0.4em]">Valores</th>
+                <th className="px-12 py-8 text-[10px] font-black text-[#AAAAAA] uppercase tracking-[0.4em]">Neto</th>
+                <th className="px-12 py-8 text-[10px] font-black text-[#AAAAAA] uppercase tracking-[0.4em] text-right">Acción</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#F2EBE3]">
@@ -90,43 +88,40 @@ const Inventory: React.FC<{ products: Product[], onAdd: (p: Product) => void, on
                 
                 return (
                   <tr key={p.id} className="hover:bg-[#FAF9F6] transition-all group">
-                    <td className="px-8 md:px-12 py-8">
+                    <td className="px-12 py-8">
                       <div className="flex items-center gap-6">
-                        <div className="w-12 h-12 bg-[#111111] rounded-[1.2rem] flex items-center justify-center text-[#F8F5F2] text-xl font-black">
+                        <div className="w-12 h-12 bg-[#111111] rounded-[1.2rem] flex items-center justify-center text-[#F8F5F2] text-xl font-black shadow-lg">
                           {p.name.charAt(0)}
                         </div>
                         <div>
-                          <p className="font-black text-[#111111] text-lg md:text-xl tracking-tight leading-none mb-1">{p.name}</p>
+                          <p className="font-black text-[#111111] text-xl tracking-tight leading-none mb-1">{p.name}</p>
                           <p className="text-[9px] text-[#BBBBBB] uppercase font-black tracking-widest">{p.category}</p>
                         </div>
                       </div>
                     </td>
-                    <td className="px-8 md:px-12 py-8 text-center">
+                    <td className="px-12 py-8 text-center">
                       <div className="flex flex-col items-center">
                         <span className={`text-2xl font-black tracking-tighter ${p.stock <= p.minStockThreshold ? 'text-rose-600' : 'text-[#111111]'}`}>{p.stock}</span>
-                        {p.stock <= p.minStockThreshold && (
-                          <span className="text-[8px] text-rose-600 font-black uppercase tracking-widest mt-1">Alerta</span>
-                        )}
                       </div>
                     </td>
-                    <td className="px-8 md:px-12 py-8">
+                    <td className="px-12 py-8">
                       <div className="flex flex-col">
                         <span className="text-[9px] text-[#BBBBBB] font-black uppercase tracking-[0.2em] mb-1">C: ${p.costPrice.toLocaleString()}</span>
-                        <span className="font-black text-[#111111] text-xl tracking-tighter">V: ${p.price.toLocaleString()}</span>
+                        <span className="font-black text-[#111111] text-2xl tracking-tighter">V: ${p.price.toLocaleString()}</span>
                       </div>
                     </td>
-                    <td className="px-8 md:px-12 py-8">
+                    <td className="px-12 py-8">
                       <div className="flex flex-col">
-                        <span className="font-black text-emerald-700 text-lg tracking-tighter">+${profit.toLocaleString()}</span>
+                        <span className="font-black text-emerald-700 text-xl tracking-tighter">+${profit.toLocaleString()}</span>
                         <span className="text-[9px] font-black text-emerald-500 uppercase tracking-widest italic opacity-60">{margin}%</span>
                       </div>
                     </td>
-                    <td className="px-8 md:px-12 py-8 text-right">
-                      <div className="flex items-center justify-end gap-2">
-                        <button onClick={() => openEdit(p)} className="w-10 h-10 flex items-center justify-center text-[#111111] bg-[#F8F5F2] border border-[#E5E0D8] rounded-full transition-all hover:bg-[#111111] hover:text-white">
+                    <td className="px-12 py-8 text-right">
+                      <div className="flex items-center justify-end gap-3">
+                        <button onClick={() => openEdit(p)} className="w-10 h-10 flex items-center justify-center text-[#111111] bg-[#F8F5F2] border border-[#E5E0D8] rounded-full hover:bg-[#111111] hover:text-white transition-all">
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
                         </button>
-                        <button onClick={() => onDelete(p.id)} className="w-10 h-10 flex items-center justify-center text-rose-500 bg-rose-50 rounded-full transition-all hover:bg-rose-500 hover:text-white">
+                        <button onClick={() => onDelete(p.id)} className="w-10 h-10 flex items-center justify-center text-rose-500 bg-rose-50 rounded-full hover:bg-rose-500 hover:text-white transition-all">
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                         </button>
                       </div>
@@ -135,9 +130,7 @@ const Inventory: React.FC<{ products: Product[], onAdd: (p: Product) => void, on
                 );
               }) : (
                 <tr>
-                  <td colSpan={5} className="px-12 py-40 text-center opacity-20">
-                    <p className="text-xl font-light italic tracking-widest uppercase">Inventario vacío</p>
-                  </td>
+                  <td colSpan={5} className="px-12 py-40 text-center opacity-20 italic text-2xl tracking-widest uppercase font-light">Sin inventario registrado</td>
                 </tr>
               )}
             </tbody>
@@ -145,66 +138,65 @@ const Inventory: React.FC<{ products: Product[], onAdd: (p: Product) => void, on
         </div>
       </div>
 
-      {/* MODAL CORREGIDO: SECCIÓN DE GUARDADO SIEMPRE VISIBLE Y SIN BLOQUEOS */}
+      {/* MODAL REDISEÑADO: EL BOTÓN SIEMPRE ESTÁ VISIBLE */}
       {showModal && (
-        <div className="fixed inset-0 bg-[#111111]/90 backdrop-blur-xl z-[100] flex items-center justify-center p-4 md:p-8 overflow-hidden animate-fade-in">
-          <div className="bg-[#FAF9F6] rounded-[2.5rem] md:rounded-[3rem] w-full max-w-xl shadow-[0_50px_100px_rgba(0,0,0,0.5)] border border-white/10 flex flex-col max-h-[90vh]">
+        <div className="fixed inset-0 bg-[#111111]/90 backdrop-blur-md z-[100] flex items-center justify-center p-4">
+          <div className="bg-[#F8F5F2] w-full max-w-xl rounded-[2.5rem] shadow-[0_50px_100px_rgba(0,0,0,0.5)] border border-white/10 flex flex-col max-h-[90vh] overflow-hidden animate-fade-in">
             
-            {/* Cabecera Fija */}
-            <div className="px-8 py-6 md:py-8 border-b border-[#E5E0D8] flex justify-between items-center bg-white shrink-0">
+            {/* Header Fijo */}
+            <div className="p-8 border-b border-[#E5E0D8] flex justify-between items-center bg-white shrink-0">
               <div>
-                <h2 className="text-2xl md:text-3xl font-black text-[#111111] tracking-tighter uppercase">{editing ? 'Editar' : 'Ingresar'}</h2>
+                <h2 className="text-2xl font-black text-[#111111] tracking-tighter uppercase">{editing ? 'Editar' : 'Ingresar'}</h2>
                 <p className="text-[9px] font-black text-[#BBBBBB] uppercase tracking-[0.4em] mt-1">Activo Elite Store</p>
               </div>
               <button 
                 onClick={() => setShowModal(false)} 
-                className="w-10 h-10 flex items-center justify-center bg-[#F8F5F2] text-[#111111] hover:bg-black hover:text-white rounded-full transition-all text-sm"
+                className="w-10 h-10 flex items-center justify-center bg-[#F8F5F2] text-[#111111] hover:bg-black hover:text-white rounded-full transition-all"
               >✕</button>
             </div>
             
-            {/* Cuerpo de formulario con scroll interno */}
+            {/* Cuerpo con Scroll */}
             <form onSubmit={handleSave} className="flex flex-col flex-1 overflow-hidden">
-              <div className="p-8 space-y-8 overflow-y-auto custom-scrollbar flex-1">
+              <div className="p-8 space-y-6 overflow-y-auto custom-scrollbar flex-1">
                 <div>
-                  <label className="block text-[9px] font-black text-[#888888] mb-3 uppercase tracking-[0.3em]">Nombre del Artículo</label>
+                  <label className="block text-[9px] font-black text-[#888888] mb-2 uppercase tracking-[0.3em]">Nombre del Artículo</label>
                   <input 
                     required 
                     type="text" 
                     value={form.name} 
                     onChange={e => setForm({...form, name: e.target.value})} 
-                    className="w-full bg-white border border-[#E5E0D8] p-5 rounded-2xl outline-none focus:border-[#111111] transition-all text-xl font-black text-[#111111] shadow-inner" 
+                    className="w-full bg-white border border-[#E5E0D8] p-5 rounded-2xl outline-none focus:border-[#111111] transition-all text-xl font-black text-[#111111]" 
                     placeholder="Ej. Bolso de Piel" 
                   />
                 </div>
                 
-                <div className="grid grid-cols-2 gap-6">
+                <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-[9px] font-black text-[#888888] mb-3 uppercase tracking-[0.3em]">Categoría</label>
+                    <label className="block text-[9px] font-black text-[#888888] mb-2 uppercase tracking-[0.3em]">Categoría</label>
                     <input 
                       required 
                       type="text" 
                       value={form.category} 
                       onChange={e => setForm({...form, category: e.target.value})} 
-                      className="w-full bg-white border border-[#E5E0D8] p-5 rounded-2xl outline-none focus:border-[#111111] transition-all font-bold text-[#111111]" 
-                      placeholder="Accesorios"
+                      className="w-full bg-white border border-[#E5E0D8] p-4 rounded-xl outline-none focus:border-[#111111] transition-all font-bold text-[#111111]" 
                     />
                   </div>
                   <div>
-                    <label className="block text-[9px] font-black text-[#888888] mb-3 uppercase tracking-[0.3em]">Stock Inicial</label>
+                    <label className="block text-[9px] font-black text-[#888888] mb-2 uppercase tracking-[0.3em]">Stock Inicial</label>
                     <input 
                       required 
                       type="number" 
                       onFocus={handleFocus}
                       value={form.stock} 
                       onChange={e => setForm({...form, stock: e.target.value})} 
-                      className="w-full bg-white border border-[#E5E0D8] p-5 rounded-2xl outline-none focus:border-[#111111] transition-all font-black text-xl text-[#111111]" 
+                      className="w-full bg-white border border-[#E5E0D8] p-4 rounded-xl outline-none focus:border-[#111111] transition-all font-black text-xl text-[#111111]" 
                     />
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-6">
+                <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-[9px] font-black text-[#888888] mb-3 uppercase tracking-[0.3em]">Costo Compra ($)</label>
+                    <label className="block text-[9px] font-black text-[#888888] mb-2 uppercase tracking-[0.3em]">Costo Compra ($)</label>
                     <input 
                       required 
                       type="number" 
@@ -212,11 +204,11 @@ const Inventory: React.FC<{ products: Product[], onAdd: (p: Product) => void, on
                       onFocus={handleFocus}
                       value={form.costPrice} 
                       onChange={e => setForm({...form, costPrice: e.target.value})} 
-                      className="w-full bg-[#FAF9F6] border border-[#E5E0D8] p-5 rounded-2xl outline-none focus:border-[#111111] transition-all font-black text-xl text-[#888888]" 
+                      className="w-full bg-[#FAF9F6] border border-[#E5E0D8] p-4 rounded-xl outline-none focus:border-[#111111] transition-all font-black text-xl text-[#888888]" 
                     />
                   </div>
                   <div>
-                    <label className="block text-[9px] font-black text-[#888888] mb-3 uppercase tracking-[0.3em]">Precio Venta ($)</label>
+                    <label className="block text-[9px] font-black text-[#888888] mb-2 uppercase tracking-[0.3em]">Precio Venta ($)</label>
                     <input 
                       required 
                       type="number" 
@@ -224,29 +216,29 @@ const Inventory: React.FC<{ products: Product[], onAdd: (p: Product) => void, on
                       onFocus={handleFocus}
                       value={form.price} 
                       onChange={e => setForm({...form, price: e.target.value})} 
-                      className="w-full bg-white border border-[#E5E0D8] p-5 rounded-2xl outline-none focus:border-[#111111] transition-all font-black text-xl text-[#111111]" 
+                      className="w-full bg-white border border-[#E5E0D8] p-4 rounded-xl outline-none focus:border-[#111111] transition-all font-black text-xl text-[#111111]" 
                     />
                   </div>
                 </div>
 
                 <div>
-                   <label className="block text-[9px] font-black text-[#888888] mb-3 uppercase tracking-[0.3em]">Mínimo para Alerta</label>
+                   <label className="block text-[9px] font-black text-[#888888] mb-2 uppercase tracking-[0.3em]">Mínimo para Alerta</label>
                    <input 
                     required 
                     type="number" 
                     onFocus={handleFocus}
                     value={form.min} 
                     onChange={e => setForm({...form, min: e.target.value})} 
-                    className="w-full bg-white border border-[#E5E0D8] p-5 rounded-2xl outline-none focus:border-[#111111] transition-all font-bold text-[#111111]" 
+                    className="w-full bg-white border border-[#E5E0D8] p-4 rounded-xl outline-none focus:border-[#111111] transition-all font-bold text-[#111111]" 
                    />
                 </div>
               </div>
 
-              {/* Pie de página con botón de guardado - Siempre visible en el modal */}
-              <div className="p-8 border-t border-[#E5E0D8] bg-[#FAF9F6] shrink-0">
+              {/* FOOTER FIJO CON EL BOTÓN - Esto asegura que nunca se tape */}
+              <div className="p-8 border-t border-[#E5E0D8] bg-white shrink-0 shadow-[0_-10px_40px_rgba(0,0,0,0.02)]">
                 <button 
                   type="submit" 
-                  className="w-full bg-[#111111] hover:bg-black text-[#F8F5F2] py-6 rounded-full font-black text-xs md:text-sm tracking-[0.5em] shadow-2xl transition-all transform hover:-translate-y-1 active:scale-95 uppercase"
+                  className="w-full bg-[#111111] hover:bg-black text-[#F8F5F2] py-6 rounded-full font-black text-xs tracking-[0.5em] shadow-xl transition-all active:scale-95 uppercase"
                 >
                   {editing ? 'Guardar Cambios' : 'Confirmar Ingreso'}
                 </button>
